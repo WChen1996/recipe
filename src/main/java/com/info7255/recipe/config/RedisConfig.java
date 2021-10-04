@@ -1,5 +1,6 @@
 package com.info7255.recipe.config;
 
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisPassword;
@@ -8,6 +9,8 @@ import org.springframework.data.redis.connection.jedis.JedisClientConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.time.Duration;
 @EnableRedisRepositories
@@ -36,5 +39,9 @@ public class RedisConfig {
                 jedisClientConfiguration.build());
 
         return jedisConFactory;
+    }
+    @Bean
+    public Jedis getJedis(){
+        return new JedisPool().getResource();
     }
 }

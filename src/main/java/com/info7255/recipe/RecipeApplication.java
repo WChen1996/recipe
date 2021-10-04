@@ -6,9 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-//@ComponentScan(basePackages = {"com.info7255.recipe.service","com.info7255.recipe.config","com.info7255.recipe.controller","com.info7255.recipe.model"})
-@ComponentScan(basePackages = {"com.info7255.recipe.service","com.info7255.recipe.controller"})
-//@ComponentScan(basePackages = {"com.info7255.recipe.service"})
+//@ComponentScan(basePackages = {"com.info7255.recipe.service","com.info7255.recipe.controller","com.info7255.recipe.config"})
 public class RecipeApplication {
 	private static ApplicationContext applicationContext;
 	public static void main(String[] args) {
