@@ -1,7 +1,10 @@
 package com.info7255.recipe.controller;
 
 import org.everit.json.schema.ValidationException;
+import org.json.JSONObject;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,21 +17,24 @@ public class ExceptionHandlerAdvice {
         // log exception
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("Json schema validation fail");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new JSONObject().put("Message","Json schema validation fail").toString());
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity handleException(Exception e) {
         // log exception
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(e.getMessage());
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new JSONObject().put("Message",e.getMessage()).toString());
     }
     @ExceptionHandler(org.json.JSONException.class)
     public ResponseEntity handleException(org.json.JSONException e) {
         // log exception
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body("not valid json input");
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new JSONObject().put("Message","not valid json input").toString());
     }
 
 }

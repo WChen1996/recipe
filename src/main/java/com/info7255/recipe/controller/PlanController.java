@@ -23,21 +23,21 @@ public class PlanController {
     @Autowired
     private PlanService planService;
 
-    @PostMapping(path = "/plan")
+    @PostMapping(path = "/plan",produces = "application/json")
     public ResponseEntity createPlan(@RequestBody String payload) {
         JSONObject plan=new JSONObject(payload);
         planService.verifyPlanWithSchema(plan);// if not validate, it will post exception to handler
         String id=(String)plan.get("objectId");
         if(planService.getPlan(id) != null){
-            return new ResponseEntity("plan ("+id+") exsit", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new JSONObject().put("Message","plan ("+id+") exsits").toString(), HttpStatus.BAD_REQUEST);
         }
         planService.addPlan(plan);
-        return new ResponseEntity("plan ("+id+") created", HttpStatus.CREATED);
+        return new ResponseEntity(new JSONObject().put("Message","plan ("+id+") created").toString(), HttpStatus.CREATED);
     }
     @GetMapping(path = "/plan/{id}",produces = "application/json")
     public ResponseEntity getPlan(@PathVariable String id,@RequestHeader HttpHeaders headers ) {
         JSONObject plan=planService.getPlan(id);
-        if(plan==null) return new ResponseEntity("plan not found",HttpStatus.NOT_FOUND);
+        if(plan==null) return new ResponseEntity(new JSONObject().put("Message","plan not found").toString(),HttpStatus.NOT_FOUND);
         String eTag=planService.getETag(plan);
 //        System.out.println(eTag);
 //        System.out.println(plan);
@@ -53,9 +53,9 @@ public class PlanController {
 
     }
 
-    @DeleteMapping("/plan/{id}")
+    @DeleteMapping(path = "/plan/{id}",produces = "application/json")
     public ResponseEntity<?> deletePlan( @PathVariable String id ) {
-        if ( planService.getPlan(id) ==null ) return new ResponseEntity("plan ("+id+") not exsit", HttpStatus.BAD_REQUEST);
+        if ( planService.getPlan(id) ==null ) return new ResponseEntity(new JSONObject().put("Message","plan ("+id+") not exsit").toString(), HttpStatus.BAD_REQUEST);
         planService.deletePlan(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

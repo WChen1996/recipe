@@ -456,5 +456,5 @@
       ]
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }
