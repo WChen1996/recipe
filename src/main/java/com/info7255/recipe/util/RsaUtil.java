@@ -13,8 +13,8 @@ public class RsaUtil {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         KeyPair keyPair=keyPairGenerator.generateKeyPair();
-        System.out.println(keyPair.getPrivate().toString());
-        System.out.println(keyPair.getPublic().toString());
+        //System.out.println(keyPair.getPrivate().getEncoded());
+        //System.out.println(keyPair.getPublic().getEncoded());
         return keyPair;
     }
 }

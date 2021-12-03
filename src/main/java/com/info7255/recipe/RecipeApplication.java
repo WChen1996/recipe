@@ -1,14 +1,17 @@
 package com.info7255.recipe;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+
 
 @SpringBootApplication
 //@ComponentScan(basePackages = {"com.info7255.recipe.service","com.info7255.recipe.controller","com.info7255.recipe.config"})
 public class RecipeApplication {
 	private static ApplicationContext applicationContext;
+
+
 	public static void main(String[] args) {
 
 		applicationContext=SpringApplication.run(RecipeApplication.class, args);

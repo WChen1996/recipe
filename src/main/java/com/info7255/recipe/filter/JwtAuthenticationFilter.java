@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         final String authorizationHeader = httpServletRequest.getHeader("Authorization");
-        System.out.println("filter called");
+        //System.out.println("filter called");
         if (authorizationHeader == null) {
             Map<String, Object> errorDetails = new HashMap<>();
             errorDetails.put("message", " Token required");
@@ -56,7 +56,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authorizationHeader.substring(7);
             isValid = jwtUtil.validateToken(token);
         } catch (Exception e) {
-            System.out.println(e);
+           // System.out.println(e);
             isValid = false;
         }
 

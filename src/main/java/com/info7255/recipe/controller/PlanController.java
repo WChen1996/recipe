@@ -3,6 +3,7 @@ package com.info7255.recipe.controller;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.info7255.recipe.config.RabbitConfig;
 import com.info7255.recipe.service.JwtAuthService;
 import com.info7255.recipe.service.PlanService;
 import org.everit.json.schema.loader.SchemaLoader;
@@ -10,12 +11,14 @@ import org.everit.json.schema.Schema;
 import org.everit.json.schema.ValidationException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +29,8 @@ public class PlanController {
     private PlanService planService;
     @Autowired
     private JwtAuthService jwtAuthService;
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
     @GetMapping(path = "/token",produces = "application/json")
     public ResponseEntity<?> generateToken() {
         String token = jwtAuthService.generateToken();
@@ -41,6 +46,12 @@ public class PlanController {
         }
         planService.addPlan(plan);
         String eTag=planService.setETag(key,plan);
+        Map<String, String> message = new HashMap<>();
+        message.put("operation", "SAVE");
+        message.put("body", payload);
+
+       // System.out.println("Sending message: " + message);
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, "indexing.q",message);
         HttpHeaders headersToSend = new HttpHeaders();
         headersToSend.setETag(eTag);
         return new ResponseEntity(new JSONObject().put("Message",key+" created").toString(),headersToSend, HttpStatus.CREATED);
@@ -77,6 +88,13 @@ public class PlanController {
         if (!ifMatch.contains(eTag)){
             return preConditionFailed(eTag);
         }
+        Map<String, Object> plan = planService.getPlan(key);
+        Map<String, String> message = new HashMap<>();
+        message.put("operation", "DELETE");
+        message.put("body",  new JSONObject(plan).toString());
+
+        //System.out.println("Sending message: " + message);
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, "indexing.q",message);
 
         planService.deletePlan(key);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -99,10 +117,30 @@ public class PlanController {
             return preConditionFailed(eTag);
         }
         JSONObject plan = new JSONObject(planObject);
-        planService.verifyPlanWithSchema(plan);// if not validate, it will post exception to handler
+        // Send message to queue for deleting previous indices incase of put
+        Map<String, Object> oldPlan = planService.getPlan(key);
         planService.deletePlan(key);
+        Map<String, String> message = new HashMap<>();
+        message.put("operation", "DELETE");
+        message.put("body", new JSONObject(oldPlan).toString());
+
+        //System.out.println("Sending message: " + message);
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, "indexing.q",message);
+
+        planService.verifyPlanWithSchema(plan);// if not validate, it will post exception to handler
         planService.addPlan(plan);
         String updatedETag=planService.setETag(key,plan);
+
+        // Send message to queue for index update
+        Map<String, Object> newPlan = planService.getPlan(key);
+        message = new HashMap<>();
+        message.put("operation", "SAVE");
+        message.put("body", planObject);
+
+        //System.out.println("Sending message: " + message);
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, "indexing.q",message);
+
+
         HttpHeaders headersToSend = new HttpHeaders();
         headersToSend.setETag(updatedETag);
         return new ResponseEntity<>(new JSONObject().put("Message",key+" updated").toString(),
@@ -126,6 +164,12 @@ public class PlanController {
         JSONObject plan = new JSONObject(planObject);
         planService.addPlan(plan);
         String updatedETag=planService.setETag(key,plan);
+        Map<String, String> message = new HashMap<>();
+        message.put("operation", "SAVE");
+        message.put("body", planObject);
+
+       // System.out.println("Sending message: " + message);
+        rabbitTemplate.convertAndSend(RabbitConfig.topicExchangeName, "indexing.q",message);
         HttpHeaders headersToSend = new HttpHeaders();
         headersToSend.setETag(updatedETag);
         return new ResponseEntity<>(new JSONObject().put("Message",key+" patched").toString(),

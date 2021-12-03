@@ -8,6 +8,7 @@ import org.everit.json.schema.Schema;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONArray;
 import org.json.JSONTokener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,10 @@ import java.util.*;
 public class PlanService {
    @Autowired
    private Jedis jedis;
-   @Autowired
-   private RedisTemplate<String, Object> template;
+
+
+
+
    public String addPlan(JSONObject plan) {
       String key = (String) plan.get("objectId");
       jsonToMap(plan);
