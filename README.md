@@ -1,24 +1,24 @@
-# web application for plan management in NEU Info7255
-## function
-◦Rest API that can handle any structured data in Json
+# NEU Info7255 plan management Restful Service 
+## Function
+- Rest API that can handle any structured data in Json
 
-◦Rest API with support for crud operations, including merge support, cascaded delete
+- Rest API with support for crud operations, including merge support, cascaded delete
 
-◦Rest API with support for validation
+- Rest API with support for validation
 
-◦Json Schema describing the data model for the use case
+- Json Schema describing the data model for the use case
 
-◦Advanced semantics with rest API operations such as update if not changed
+- Advanced semantics with rest API operations such as update if not changed(etag)
 
-◦Storage of data in key/value store in redis and indexing in Elastic
+- Storage of data in key/value store in redis and indexing in Elastic with 
 
-◦Search with parent/child using Elastic 
+- Search with parent/child using Elastic 
 
-◦Queue implementation with RabbitMQ
+- Queue implementation for indexing operation with RabbitMQ 
 
-◦Parent-Child indexing
+- Parent-Child indexing
 
-◦Security using JWT With RSA 
+- Security using JWT With RSA 
 
 ## Installation
 - Redis,Elastic,RabbitMQ installation requried
@@ -28,5 +28,7 @@
 - Redis:...
 
 
-
+## Learning reference
+- Elastic https://www.elastic.co/guide/en/elasticsearch/guide/current/getting-started.html
+- RabbitMQ https://spring.io/guides/gs/messaging-rabbitmq/
 
