@@ -30,5 +30,5 @@
 
 ## Learning reference
 - Elastic https://www.elastic.co/guide/en/elasticsearch/guide/current/getting-started.html
+- Elastic Java API https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html
 - RabbitMQ https://spring.io/guides/gs/messaging-rabbitmq/
-
